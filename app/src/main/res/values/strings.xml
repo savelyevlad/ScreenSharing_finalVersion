@@ -8,4 +8,5 @@
     <string name="port">PORT:</string>
     <string name="save">Save!</string>
     <string name="id">ID:</string>
+    <string name="title_activity_watch">ActivityWatch</string>
 </resources>

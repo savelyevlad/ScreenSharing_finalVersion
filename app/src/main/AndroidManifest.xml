@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.savelyevlad.screensharing">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -21,7 +21,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".settings.SettingsActivity" />
-        <activity android:name=".watch.WatchActivity" />
+        <activity
+            android:name=".ActivityWatch"
+            android:label="@string/title_activity_watch"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

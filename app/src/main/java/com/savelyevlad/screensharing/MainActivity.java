@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import com.savelyevlad.screensharing.settings.SettingsActivity;
-import com.savelyevlad.screensharing.watch.WatchActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         buttonWatch.setOnClickListener((v) -> {
-            Intent intent = new Intent(MainActivity.this, WatchActivity.class);
+            Intent intent = new Intent(MainActivity.this, ActivityWatch.class);
             startActivity(intent);
         });
     }
