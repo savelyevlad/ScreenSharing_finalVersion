@@ -1,5 +1,6 @@
 package com.savelyevlad.screensharing.settings;
 
+import android.media.projection.MediaProjectionManager;
 import android.os.Environment;
 
 import java.io.File;
@@ -9,9 +10,19 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
-import java.util.Arrays;
+import java.net.Socket;
 
 public class PublicStaticObjects {
+
+    private static MediaProjectionManager projectionManager;
+
+    public static void setProjectionManager(MediaProjectionManager projectionManager) {
+        PublicStaticObjects.projectionManager = projectionManager;
+    }
+
+    public static MediaProjectionManager getProjectionManager() {
+        return projectionManager;
+    }
 
     private static InetAddress ip;
 
@@ -57,6 +68,49 @@ public class PublicStaticObjects {
     static {
         init();
     }
+
+    public static ObjectOutputStream getObjectOutputStream() {
+        return objectOutputStream;
+    }
+
+    public static void setObjectOutputStream(ObjectOutputStream objectOutputStream) {
+        PublicStaticObjects.objectOutputStream = objectOutputStream;
+    }
+
+    private static ObjectOutputStream objectOutputStream;
+
+    public static ObjectInputStream getObjectInputStream() {
+        return objectInputStream;
+    }
+
+    public static void setObjectInputStream(ObjectInputStream objectInputStream) {
+        PublicStaticObjects.objectInputStream = objectInputStream;
+    }
+
+    private static ObjectInputStream objectInputStream;
+
+    public static Socket getSocket() {
+        return socket;
+    }
+
+    public static void setSocket(Socket socket) {
+        PublicStaticObjects.socket = socket;
+    }
+
+    public static void initSocket() {
+        if(PublicStaticObjects.getSocket() == null) {
+            try {
+                Thread thread = new Thread(new Initialization());
+                thread.setPriority(Thread.MAX_PRIORITY);
+                thread.start();
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static Socket socket;
 
     public static InetAddress getIp() {
         return ip;

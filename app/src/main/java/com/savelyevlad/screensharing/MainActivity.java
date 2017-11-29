@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import com.savelyevlad.screensharing.settings.SettingsActivity;
+import com.savelyevlad.screensharing.sharing.SharingActivity;
+import com.savelyevlad.screensharing.watch.ActivityWatch;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
 
         buttonSettings.setOnClickListener((v) -> {
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        });
+
+        buttonShare.setOnClickListener((v) -> {
+            Intent intent = new Intent(MainActivity.this, SharingActivity.class);
             startActivity(intent);
         });
 

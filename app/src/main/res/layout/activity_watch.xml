@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.savelyevlad.screensharing.ActivityWatch">
+    tools:context="com.savelyevlad.screensharing.watch.ActivityWatch">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
             tools:ignore="ObsoleteLayoutParam">
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/recordButton"
+                android:id="@+id/stopFab"
                 android:layout_width="50dp"
                 android:layout_height="63dp"
                 android:layout_above="@+id/fab"
@@ -72,7 +72,7 @@
             tools:ignore="ObsoleteLayoutParam">
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/initButton"
+                android:id="@+id/startFab"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_above="@+id/fab"
@@ -82,6 +82,7 @@
                 app:layout_anchor="@+id/include2"
                 app:srcCompat="@android:drawable/ic_dialog_info"
                 tools:ignore="ObsoleteLayoutParam" />
+
         </LinearLayout>
 
     </LinearLayout>
