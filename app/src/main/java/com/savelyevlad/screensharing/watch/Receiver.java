@@ -6,8 +6,6 @@ import android.widget.ImageView;
 
 import com.savelyevlad.screensharing.settings.PublicStaticObjects;
 
-import java.io.IOException;
-
 public class Receiver implements Runnable {
 
     private byte[] concat(byte[] a, byte[] b) {
@@ -32,7 +30,8 @@ public class Receiver implements Runnable {
             try {
                 byte[] buf = (byte[]) PublicStaticObjects.getObjectInputStream().readObject();
                 Bitmap receiveBitmap = BitmapFactory.decodeByteArray(buf, 0, buf.length);
-            } catch (IOException | ClassNotFoundException e) {
+                changeImage(receiveBitmap);
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
         }

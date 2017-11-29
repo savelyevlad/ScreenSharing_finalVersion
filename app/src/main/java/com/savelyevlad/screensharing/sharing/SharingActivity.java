@@ -13,6 +13,7 @@ import android.media.ImageReader;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
@@ -25,6 +26,7 @@ import com.savelyevlad.screensharing.R;
 import com.savelyevlad.screensharing.settings.PublicStaticObjects;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -37,7 +39,7 @@ public class SharingActivity extends Activity {
 
     private boolean running = false;
 
-    private MediaProjectionManager mediaProjectionManager;
+    private MediaProjectionManager projectionManager;
 
     private int id;
 
@@ -52,14 +54,14 @@ public class SharingActivity extends Activity {
         startButton = findViewById(R.id.startButton);
         stopButton = findViewById(R.id.stopButton);
 
-        mediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        projectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 
         startButton.setOnClickListener((v) -> {
             if(running) {
                 return;
             }
             running = true;
-            new Thread(() -> {
+            Thread thread = new Thread(() -> {
                 try {
                     PublicStaticObjects.getObjectOutputStream().writeObject(-1);
                     Object object = PublicStaticObjects.getObjectInputStream().readObject();
@@ -67,9 +69,28 @@ public class SharingActivity extends Activity {
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
-            }).start();
-            textID.setText(id);
-            startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), 228);
+            });
+            thread.start();
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            textID.setText(String.valueOf(id));
+            startActivityForResult(projectionManager.createScreenCaptureIntent(), 228);
+        });
+
+        stopButton.setOnClickListener((v) -> {
+            if(!running) {
+                return;
+            }
+            running = false;
+            mediaProjection.stop();
+            try {
+                PublicStaticObjects.getObjectOutputStream().writeObject(-2);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
     }
 
@@ -84,9 +105,11 @@ public class SharingActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 228) {
-            mediaProjection = mediaProjectionManager.getMediaProjection(resultCode, data);
+            mediaProjection = projectionManager.getMediaProjection(resultCode, data);
 
-            if(mediaProjection != null) {
+            if (mediaProjection != null) {
+
+                //projectionStarted = true;
                 DisplayMetrics metrics = getResources().getDisplayMetrics();
                 int density = metrics.densityDpi;
                 int flags = DisplayManager.VIRTUAL_DISPLAY_FLAG_OWN_CONTENT_ONLY
@@ -95,29 +118,53 @@ public class SharingActivity extends Activity {
                 Display display = getWindowManager().getDefaultDisplay();
                 Point size = new Point();
                 display.getSize(size);
-                displayHeight = size.y;
-                displayWidth = size.x;
+                displayHeight=size.y;
+                displayWidth=size.x;
+
 
                 imageReader = ImageReader.newInstance(size.x, size.y, PixelFormat.RGBA_8888, 16);
 
-                mediaProjection.createVirtualDisplay("screencap", size.x, size.y, density,
+                mediaProjection.createVirtualDisplay("screencap",
+                        size.x, size.y, density,
                         flags, imageReader.getSurface(), null, handler);
                 imageReader.setOnImageAvailableListener(new ImageAvailableListener(), handler);
             }
+
         }
     }
 
+    public void createImage(Bitmap bmp) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
+
+        File file1 = new File(Environment.getExternalStorageDirectory() +"/captures");
+        file1.mkdir();
+
+        File file = new File(Environment.getExternalStorageDirectory() +
+                "/captures/"+ System.currentTimeMillis() + ".jpg");
+        try {
+            file.createNewFile();
+            FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(bytes.toByteArray());
+            outputStream.close();
+            //Toast.makeText(getApplicationContext(),"success",Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    int i = 1;
     @SuppressLint("NewApi")
     private class ImageAvailableListener implements ImageReader.OnImageAvailableListener {
-
-        private Bitmap bitmap;
-
+        Bitmap bitmap;
         @Override
-        public void onImageAvailable(ImageReader imageReader) {
-            Image image = null;
-            FileOutputStream fileOutputStream = null;
-            ByteArrayOutputStream byteArrayOutputStream = null;
+        public void onImageAvailable(ImageReader reader) {
 
+            //       Log.e(",", System.currentTimeMillis() +  " " + currentTime);
+            Image image = null;
+            FileOutputStream fos = null;
+            //  Bitmap bitmap = null;
+
+            ByteArrayOutputStream stream = null;
             try {
                 image = imageReader.acquireLatestImage();
                 if (image != null) {
@@ -126,18 +173,48 @@ public class SharingActivity extends Activity {
                     int pixelStride = planes[0].getPixelStride();
                     int rowStride = planes[0].getRowStride();
                     int rowPadding = rowStride - pixelStride * displayWidth;
-
+                    // create bitmap
                     bitmap = Bitmap.createBitmap(displayWidth + rowPadding / pixelStride,
                             displayHeight, Bitmap.Config.ARGB_4444);
                     bitmap.copyPixelsFromBuffer(buffer);
                     Bitmap bit = bitmap.copy(Bitmap.Config.ARGB_4444, false);
-
+                    // Log.e("BEFORE SEND", "BEFORE SEND");
+                   // createImage(bit);
+                    Log.e("IN AVAILLIST", i++ + "");
                     sendImage(bit);
+                    //         mediaProjection.stop();
+                    // Log.e("AFTER SEND", "AFTER SEND");
+                    //     stream = new ByteArrayOutputStream();
+                    //     bitmap.compress(Bitmap.CompressFormat.JPEG, 25, stream);
+                    //      createImage(bit, imagesProduced);
+                    //mediaProjection.stop();
+                    //  imageView.setImageBitmap(bitmap);
+                    //skylinkConnection.sendData(currentRemotePeerId, stream.toByteArray());
+                    //Log.d(TAG, "sending data to peer :" + currentRemotePeerId);
+                    //}
 
+                    //   ++imagesProduced;
+                    // Log.e("hi", "captured image: " + imagesProduced);
                 }
+
             } catch (Throwable e) {
                 Log.e("Throwable", e.getMessage());
             } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
+                }
+
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
+                }
 
                 if (bitmap != null) {
                     bitmap.recycle();
@@ -147,6 +224,7 @@ public class SharingActivity extends Activity {
                     image.close();
                 }
             }
+
         }
     }
 
@@ -163,16 +241,18 @@ public class SharingActivity extends Activity {
             ByteArrayOutputStream bytes;
 
             @Override
-            public void run() {
+            public synchronized void run() {
                 bytes = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 5, bytes);
 
                 try {
                     PublicStaticObjects.getObjectOutputStream().flush();
-                    PublicStaticObjects.getObjectOutputStream().reset();
+//                    PublicStaticObjects.getObjectOutputStream().reset();
+//                    Log.e("BEFORE SENDING", "" + bytes.toByteArray().length);
                     PublicStaticObjects.getObjectOutputStream().writeObject(bytes.toByteArray());
+//                    Log.e("AFTER SENDING", "" + bytes.toByteArray().length);
                     PublicStaticObjects.getObjectOutputStream().flush();
-                    PublicStaticObjects.getObjectOutputStream().reset();
+//                    PublicStaticObjects.getObjectOutputStream().reset();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -180,5 +260,10 @@ public class SharingActivity extends Activity {
         });
         thread.setPriority(Thread.MAX_PRIORITY);
         thread.start();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
