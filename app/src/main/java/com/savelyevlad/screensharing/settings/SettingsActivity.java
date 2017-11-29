@@ -3,12 +3,16 @@ package com.savelyevlad.screensharing.settings;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.savelyevlad.screensharing.R;
@@ -24,11 +28,15 @@ public class SettingsActivity extends Activity {
     private EditText editTextIp;
     private EditText editTextPORT;
 
+    private SeekBar seekBar;
+    private TextView editTextBar;
+
     private Button buttonSave;
 
     private String folderPath = Environment.getExternalStorageDirectory().getPath() + "/ScreenSharing/";
 
-    @SuppressLint("SetTextI18n")
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    @SuppressLint({"SetTextI18n", "WrongViewCast"})
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +44,37 @@ public class SettingsActivity extends Activity {
 
         editTextIp = findViewById(R.id.editText_ip);
         editTextPORT = findViewById(R.id.editText_port);
+
+        editTextBar = findViewById(R.id.textQuality);
+        seekBar = findViewById(R.id.seekBar);
+        seekBar.setMax(90);
+        seekBar.incrementProgressBy(1);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if (seekBar.getProgress() == 0) {
+                    seekBar.setProgress(1);
+                }
+                editTextBar.setText(String.valueOf(seekBar.getProgress()));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                if (seekBar.getProgress() == 0) {
+                    seekBar.setProgress(1);
+                }
+                editTextBar.setText(String.valueOf(seekBar.getProgress()));
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (seekBar.getProgress() == 0) {
+                    seekBar.setProgress(1);
+                }
+                editTextBar.setText(String.valueOf(seekBar.getProgress()));
+            }
+        });
 
         buttonSave = findViewById(R.id.button_save);
 

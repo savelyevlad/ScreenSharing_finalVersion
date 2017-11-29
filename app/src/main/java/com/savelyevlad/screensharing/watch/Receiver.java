@@ -27,6 +27,11 @@ public class Receiver implements Runnable {
     @Override
     public void run() {
         while (true) {
+            synchronized (this) {
+                if (!ActivityWatch.isMustBeAlive()) {
+                    return;
+                }
+            }
             try {
                 byte[] buf = (byte[]) PublicStaticObjects.getObjectInputStream().readObject();
                 Bitmap receiveBitmap = BitmapFactory.decodeByteArray(buf, 0, buf.length);
