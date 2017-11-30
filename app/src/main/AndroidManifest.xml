@@ -26,6 +26,7 @@
             android:label="@string/title_activity_watch"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".sharing.SharingActivity" />
+        <activity android:name=".HelpActivity"></activity>
     </application>
 
 </manifest>

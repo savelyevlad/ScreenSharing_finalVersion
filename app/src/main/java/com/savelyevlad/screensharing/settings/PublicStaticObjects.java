@@ -28,6 +28,16 @@ public class PublicStaticObjects {
 
     private static int PORT;
 
+    public static int getQuality() {
+        return quality;
+    }
+
+    public static void setQuality(int quality) {
+        PublicStaticObjects.quality = quality;
+    }
+
+    private static int quality;
+
     private PublicStaticObjects() { }
 
     private static String folderPath = Environment.getExternalStorageDirectory().getPath() + "/ScreenSharing/";

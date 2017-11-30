@@ -243,7 +243,7 @@ public class SharingActivity extends Activity {
             @Override
             public synchronized void run() {
                 bytes = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 5, bytes);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, PublicStaticObjects.getQuality(), bytes);
 
                 try {
                     PublicStaticObjects.getObjectOutputStream().flush();

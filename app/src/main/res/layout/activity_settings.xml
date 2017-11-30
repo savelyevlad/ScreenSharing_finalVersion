@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,10 +39,10 @@
         <SeekBar
             android:id="@+id/seekBar"
             android:layout_width="338dp"
-            android:layout_height="20dp"
+            android:layout_height="30dp"
             android:min="2"
             tools:targetApi="o"
-            android:layout_marginBottom="25dp"/>
+            android:layout_marginBottom="50dp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -107,5 +106,6 @@
         </LinearLayout>
 
     </LinearLayout>
+
 
 </android.support.constraint.ConstraintLayout>

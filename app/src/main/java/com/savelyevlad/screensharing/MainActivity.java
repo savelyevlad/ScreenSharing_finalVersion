@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
         buttonSettings = findViewById(R.id.button_settings);
         buttonShare = findViewById(R.id.button_share);
         buttonWatch = findViewById(R.id.button_watch);
+        buttonHelp = findViewById(R.id.button_help);
 
         buttonSettings.setOnClickListener((v) -> {
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
@@ -38,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
 
         buttonWatch.setOnClickListener((v) -> {
             Intent intent = new Intent(MainActivity.this, ActivityWatch.class);
+            startActivity(intent);
+        });
+        buttonHelp.setOnClickListener((v) -> {
+            Intent intent = new Intent(MainActivity.this, HelpActivity.class);
             startActivity(intent);
         });
     }
