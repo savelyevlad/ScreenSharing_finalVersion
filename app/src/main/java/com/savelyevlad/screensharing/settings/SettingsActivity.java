@@ -50,6 +50,7 @@ public class SettingsActivity extends Activity {
         seekBar.setMax(90);
         seekBar.incrementProgressBy(1);
         seekBar.setProgress(PublicStaticObjects.getQuality());
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
